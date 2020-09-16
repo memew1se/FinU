@@ -8,7 +8,7 @@ class Application(Canvas):
         self.grid()
         self.update()
 
-        self.update_time = 10
+        self.update_time = 1
 
         # Координаты центра
         self.center_x = self.winfo_width() // 2
@@ -24,7 +24,7 @@ class Application(Canvas):
 
         # Параметры точки
         self.current_angle = 0
-        self.current_speed = 1
+        self.current_speed = 0.001
         self.point_radius = 5
         self.point_coords = [self.center_x + self.circle_radius - self.point_radius,  # x1
                              self.center_y - self.point_radius,                       # y1
@@ -37,13 +37,24 @@ class Application(Canvas):
 
     def create_widgets(self):
         # Создаем круг
-        self.create_oval(*self.circle_coords, fill="#CD5C5C")
+        self.create_oval(*self.circle_coords, fill="#CD5C5C", tag="circle")
 
         # Создаем точку
-        self.create_oval(*self.point_coords, fill="#FFA07A")
+        self.create_oval(*self.point_coords, fill="#FFA07A", tag="point")
 
     def animation(self):
-        self.current_angle += self.current_speed * self.update_time
+        self.current_angle += self.current_speed
+
+        new_x = self.center_x + self.circle_radius * math.sin(self.current_angle)
+        new_y = self.center_y + self.circle_radius * math.cos(self.current_angle)
+
+        x1 = new_x - self.point_radius
+        y1 = new_y - self.point_radius
+        x2 = new_x + self.point_radius
+        y2 = new_y + self.point_radius
+        
+        self.coords("point", x1, y1, x2, y2)
+        self.after(self.update_time, self.animation)
 
 
 if __name__ == '__main__':
