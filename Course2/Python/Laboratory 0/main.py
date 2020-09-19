@@ -25,7 +25,7 @@ class Application(Canvas):
         # Параметры точки
         self.current_angle = 0
         self.current_speed = 0.001
-        self.point_radius = 5
+        self.point_radius = 10
         self.point_coords = [self.center_x + self.circle_radius - self.point_radius,  # x1
                              self.center_y - self.point_radius,                       # y1
 
@@ -44,9 +44,9 @@ class Application(Canvas):
 
     def animation(self):
         self.current_angle += self.current_speed
-
-        new_x = self.center_x + self.circle_radius * math.sin(self.current_angle)
-        new_y = self.center_y + self.circle_radius * math.cos(self.current_angle)
+        
+        new_x = self.center_x + self.circle_radius * math.cos(self.current_angle)
+        new_y = self.center_y - self.circle_radius * math.sin(self.current_angle)
 
         x1 = new_x - self.point_radius
         y1 = new_y - self.point_radius
