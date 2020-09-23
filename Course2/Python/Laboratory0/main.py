@@ -53,6 +53,7 @@ class Application(Canvas):
                                         activebackground="#33B5E5",
                                         relief=FLAT)
 
+        # Параметры шкалы
         self.speed_scale = Scale(self,
                                  orient=VERTICAL,
                                  length=100,
