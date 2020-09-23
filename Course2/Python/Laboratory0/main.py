@@ -5,7 +5,7 @@ import math
 class Application(Canvas):
     def __init__(self, master, **options):
         super().__init__(master, **options)
-        self.pack()
+        self.grid()
         self.update()
 
         self.update_time = 1
@@ -34,6 +34,34 @@ class Application(Canvas):
                              self.center_x + self.circle_radius + self.point_radius,  # x2
                              self.center_y + self.point_radius]  # y2
 
+        # Параметры кнопок
+        self.exit_button = Button(self,
+                                  text="Quit",
+                                  command=self.quit,
+                                  anchor=NW)
+
+        self.exit_button.configure(width=10,
+                                   activebackground="#33B5E5",
+                                   relief=FLAT)
+
+        self.direction_button = Button(self,
+                                       text="Против часовой",
+                                       command=self.change_direction,
+                                       anchor=NW)
+
+        self.direction_button.configure(width=13,
+                                        activebackground="#33B5E5",
+                                        relief=FLAT)
+
+        self.speed_scale = Scale(self,
+                                 orient=VERTICAL,
+                                 length=100,
+                                 from_=1,
+                                 to=3,
+                                 command=self.scale_update)
+
+        self.speed_scale.set(2)
+
         self.create_widgets()
         self.animation()
 
@@ -45,20 +73,15 @@ class Application(Canvas):
         self.create_oval(*self.point_coords, fill="#FFA07A", tag="point")
 
         # Создаем кнопки
-        self.exit_button = Button(self, text="Quit", command=self.quit, anchor=NW)
-        self.exit_button.configure(width=10, activebackground="#33B5E5", relief=FLAT)
-        exit_window = self.create_window(10, 10, anchor=NW, window=self.exit_button)
-
-        self.direction_button = Button(self, text="Против часовой", command=self.change_direction,
-                                       anchor=NW)
-        self.direction_button.configure(width=13, activebackground="#33B5E5", relief=FLAT)
-        direction_window = self.create_window(100, 10, anchor=NW, window=self.direction_button)
+        self.create_window(10, 10, anchor=NW, window=self.exit_button)
+        self.create_window(100, 10, anchor=NW, window=self.direction_button)
 
         # Создаем шкалу
-        self.speed_scale = Scale(self, orient=VERTICAL, length=100, from_=1, to=3,
-                                 command=self.scale_update)
-        self.speed_scale.set(2)
-        speed_window = self.create_window(40, 100, window=self.speed_scale)
+        self.create_window(40, 100, window=self.speed_scale)
+
+        # exit_window = self.create_window(10, 10, anchor=NW, window=self.exit_button)
+        # direction_window = self.create_window(100, 10, anchor=NW, window=self.direction_button)
+        # speed_window = self.create_window(40, 100, window=self.speed_scale)
 
     def animation(self):
         self.current_angle += self.current_speed * self.point_direction * self.speed_multiplication
@@ -97,4 +120,3 @@ if __name__ == '__main__':
     root.title("Laboratory 0")
     app = Application(root, width=600, height=600, bg="#292626")
     root.mainloop()
-
