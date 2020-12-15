@@ -3,6 +3,7 @@ package wikimedia;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -18,10 +19,44 @@ public class Parser {
 
     public Parser(String target) throws Exception {
 
-        String strig_target = target;
+        String strigTarget = target;
+        target = URLEncoder.encode(target, StandardCharsets.UTF_8);
+
+        URL url = new URL("https://ru.wikipedia.org/w/api.php?" +
+                "action=query&format=json&list=search&srsearch=" + target);
+
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+        String response = in.readLine();
+        in.close();
+
+        Object obj = new JSONParser().parse(response);
+        JSONObject jo = (JSONObject) obj;
+
+
+        jo = (JSONObject) jo.get("query");
+        JSONArray joArray = (JSONArray) jo.get("search");
+
+        int limit = 0;
+        for (Object joElement:joArray){
+            if (limit == 1) {
+                continue;
+            }
+
+            limit++;
+            Map element = (Map) joElement;
+            String pageid = element.get("pageid").toString();
+            Parser.pageSearch(pageid);
+
+        }
+    }
+
+    public static void pageSearch(String target) throws Exception {
+
         target = URLEncoder.encode(target, StandardCharsets.UTF_8);
         URL url = new URL("https://ru.wikipedia.org/w/api.php?" +
-                "format=json&action=query&prop=extracts&explaintext=&exintro=&titles=" + target);
+                "format=json&action=query&prop=extracts&explaintext=&exintro=&pageids=" + target);
         HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
@@ -50,7 +85,7 @@ public class Parser {
                         String answer = valueMap.get(vkey).toString();
                         answer = answer.replaceAll("\\p{Pd}", "-");
 
-                        System.out.println("Вот что нашлось по запросу " + strig_target + ":\n");
+                        System.out.println("Вот что нашлось по данному запросу:\n");
                         String[] sentences = answer.split("\\.");
                         for (String sentence : sentences) {
                             System.out.println(sentence);
@@ -59,12 +94,13 @@ public class Parser {
                 }
 
             } else {
-                System.out.println("По запросу " + strig_target + " ничего не нашлось");
+                System.out.println("По данному запросу ничего не нашлось");
             }
         }
 
     }
 
 }
+
 
 
