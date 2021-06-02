@@ -1,0 +1,13 @@
+* ls
+* dir
+* cd
+* mkdir
+* rmdir
+* touch
+* write
+* cat
+* rm
+* cp
+* move
+* rename
+* pwd
